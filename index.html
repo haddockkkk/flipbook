@@ -1,12 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flipbook Test</title>
-  </head>
-  <body style="font-family:sans-serif;text-align:center;padding-top:100px;">
-    <h1>If you can see this, GitHub Pages is working ✅</h1>
-    <p>This is a test message.</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baein Flipbook</title>
+
+  <!-- Flipbook + PDF.js libraries -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/css/page-flip.css">
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+
+  <style>
+    body {
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 1rem;
+    }
+    #flipbook {
+      width: 600px;
+      height: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Loading flipbook...</h1>
+  <div id="flipbook"></div>
+
+  <script>
+    (async () => {
+      const pdfUrl = "https://raw.githubusercontent.com/haddockkkk/flipbook/main/Baein_Print.pdf";
+
+      // Load the PDF
+      const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+      const pages = [];
+
+      // Convert each PDF page to an image
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        pages.push(canvas.toDataURL());
+      }
+
+      // Initialize the flipbook
+      const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+        width: 600,
+        height: 400,
+        showCover: true,
+        maxShadowOpacity: 0.3,
+        size: "stretch",
+      });
+
+      pageFlip.loadFromImages(pages);
+
+      document.querySelector("h1").innerText = "Flipbook loaded ✅";
+    })();
+  </script>
+</body>
 </html>
+
