@@ -12,14 +12,14 @@
 
   <style>
     body {
-      background: #f9f9f9;
+      background: #f8f8f8;
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
       margin: 0;
-      font-family: sans-serif;
-      flex-direction: column;
+      font-family: system-ui, sans-serif;
     }
     h1 {
       font-size: 1rem;
@@ -27,10 +27,16 @@
       margin-bottom: 1rem;
     }
     #flipbook {
-      width: 600px;
-      height: 400px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
       background: white;
+      aspect-ratio: 8.5 / 11; /* Keeps letter proportions */
+      width: min(90vw, 700px);
+      height: auto;
+    }
+    @media (max-width: 700px) {
+      #flipbook {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -46,7 +52,7 @@
       const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
       const pages = [];
 
-      // Convert each PDF page to an image
+      // Render pages to image data
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const viewport = page.getViewport({ scale: 2 });
@@ -58,10 +64,16 @@
         pages.push(canvas.toDataURL());
       }
 
-      // Initialize the flipbook
-      const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
-        width: 600,
-        height: 400,
+      const flipbookContainer = document.getElementById("flipbook");
+      const rect = flipbookContainer.getBoundingClientRect();
+
+      // Compute proper dimensions
+      const pageWidth = rect.width;
+      const pageHeight = pageWidth * (11 / 8.5); // maintain letter ratio
+
+      const pageFlip = new St.PageFlip(flipbookContainer, {
+        width: pageWidth,
+        height: pageHeight,
         showCover: true,
         maxShadowOpacity: 0.3,
         size: "stretch",
@@ -74,4 +86,3 @@
   </script>
 </body>
 </html>
-
