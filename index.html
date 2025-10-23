@@ -80,7 +80,7 @@
     const pageFlip = new St.PageFlip(flipbookContainer, {
   width: pageWidth,
   height: pageHeight,
-  showCover: true,          // first page = cover
+  showCover: true,       // first page is cover
   usePortrait: false,
   drawShadow: true,
   flippingTime: 600,
@@ -91,14 +91,12 @@
   maxShadowOpacity: 0.3,
   clickEventForward: true,
   padding: 0,
-  gutter: 0,
+  gutter: 0
 });
 
-// Load pages and mark the first as a cover
-pageFlip.loadFromImages(pages, { frontPage: true });
+// Load pages normally (do NOT pass { frontPage: true })
+pageFlip.loadFromImages(pages);
 
-
-    pageFlip.loadFromImages(pages);
 
     // Hide loading message if you kept it
     const msg = document.querySelector("h1");
@@ -107,6 +105,7 @@ pageFlip.loadFromImages(pages, { frontPage: true });
   </script>
 </body>
 </html>
+
 
 
 
