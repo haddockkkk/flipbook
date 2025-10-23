@@ -37,6 +37,11 @@
       #flipbook {
         width: 100%;
       }
+    .page {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
     }
   </style>
 </head>
@@ -45,44 +50,60 @@
   <div id="flipbook"></div>
 
   <script>
-    (async () => {
-      const pdfUrl = "https://raw.githubusercontent.com/haddockkkk/flipbook/main/Baein_Print.pdf";
+  (async () => {
+    const pdfUrl = "https://raw.githubusercontent.com/haddockkkk/flipbook/main/Baein_Print.pdf";
 
-      // Load the PDF
-      const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-      const pages = [];
+    // Load the PDF
+    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+    const pages = [];
 
-      // Render pages to image data
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 2 });
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        pages.push(canvas.toDataURL());
-      }
+    // Render PDF pages to image data
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      pages.push(canvas.toDataURL());
+    }
 
-      const flipbookContainer = document.getElementById("flipbook");
-      const rect = flipbookContainer.getBoundingClientRect();
+    const flipbookContainer = document.getElementById("flipbook");
+    const rect = flipbookContainer.getBoundingClientRect();
 
-      // Compute proper dimensions
-      const pageWidth = rect.width;
-      const pageHeight = pageWidth * (11 / 8.5); // maintain letter ratio
+    // Maintain letter-size aspect ratio
+    const pageWidth = rect.width;
+    const pageHeight = pageWidth * (11 / 8.5);
 
-      const pageFlip = new St.PageFlip(flipbookContainer, {
-        width: pageWidth,
-        height: pageHeight,
-        showCover: true,
-        maxShadowOpacity: 0.3,
-        size: "stretch",
-      });
+    // Initialize flipbook with tighter settings
+    const pageFlip = new St.PageFlip(flipbookContainer, {
+      width: pageWidth,
+      height: pageHeight,
+      showCover: true,
+      maxShadowOpacity: 0.3,
+      size: "stretch",
+      mobileScrollSupport: false,
+      usePortrait: false,
+      drawShadow: true,
+      flippingTime: 600,
+      showPageCorners: false,
+      autoSize: true,
+      clickEventForward: true,
+      // ↓ This closes the gutter / page gap
+      disableFlipByClick: false,
+      gutter: 0, 
+      padding: 0,
+    });
 
-      pageFlip.loadFromImages(pages);
+    pageFlip.loadFromImages(pages);
 
-    })();
+    // Hide loading message if you kept it
+    const msg = document.querySelector("h1");
+    if (msg) msg.style.display = "none";
+  })();
   </script>
 </body>
 </html>
+
 
