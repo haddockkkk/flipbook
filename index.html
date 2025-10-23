@@ -78,23 +78,25 @@
 
     // Initialize flipbook with tighter settings
     const pageFlip = new St.PageFlip(flipbookContainer, {
-      width: pageWidth,
-      height: pageHeight,
-      showCover: true,
-      maxShadowOpacity: 0.3,
-      size: "stretch",
-      mobileScrollSupport: false,
-      usePortrait: false,
-      drawShadow: true,
-      flippingTime: 600,
-      showPageCorners: false,
-      autoSize: true,
-      clickEventForward: true,
-      // ↓ This closes the gutter / page gap
-      disableFlipByClick: false,
-      gutter: 0, 
-      padding: 0,
-    });
+  width: pageWidth,
+  height: pageHeight,
+  showCover: true,          // first page = cover
+  usePortrait: false,
+  drawShadow: true,
+  flippingTime: 600,
+  showPageCorners: false,
+  size: "stretch",
+  autoSize: true,
+  mobileScrollSupport: false,
+  maxShadowOpacity: 0.3,
+  clickEventForward: true,
+  padding: 0,
+  gutter: 0,
+});
+
+// Load pages and mark the first as a cover
+pageFlip.loadFromImages(pages, { frontPage: true });
+
 
     pageFlip.loadFromImages(pages);
 
@@ -105,5 +107,6 @@
   </script>
 </body>
 </html>
+
 
 
